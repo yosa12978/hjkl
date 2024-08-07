@@ -25,10 +25,12 @@ func Run() error {
 		util.WriteJson(w, 200, map[string]any{"message": "Hello hjkl!"})
 	})
 
-	mux := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		logger := logging.NewJsonLogger(os.Stdout)
-		middleware.Latency(logger)(router).ServeHTTP(w, r)
-	})
+	logger := logging.NewJsonLogger(os.Stdout)
+	handlerChain := middleware.Chain(
+		router,
+		middleware.Latency(logger),
+	)
+
 	addr := fmt.Sprintf("%s:%d", cfg.App.Host, cfg.App.Port)
-	return http.ListenAndServe(addr, mux)
+	return http.ListenAndServe(addr, handlerChain)
 }
