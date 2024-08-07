@@ -28,8 +28,6 @@ services:
     container_name: hjkl-mariadb
     image: mariadb
     restart: always
-    ports:
-      - "3306"
     environment:
       - MARIADB_ROOT_PASSWORD=root
       - MARIADB_DATABASE=hjkl_db
@@ -50,7 +48,7 @@ services:
       start_period: 10s
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 5
   adminer:
     container_name: hjkl-adminer
     image: adminer
@@ -83,8 +81,6 @@ services:
     container_name: hjkl-redis
     image: redis
     restart: always
-    ports:
-      - '6379'
     networks:
       - hjkl-network
     volumes:
