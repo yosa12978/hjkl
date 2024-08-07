@@ -1,0 +1,90 @@
+services:
+  api:
+    container_name: hjkl-api
+    build: .
+    ports:
+      - "5000:80"
+    restart: always
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      migrate:
+        condition: service_started
+    networks:
+      - hjkl-network
+    environment:
+      - HJKL_MARIADB_USERNAME=user
+      - HJKL_MARIADB_PASSWORD=user
+      - HJKL_MARIADB_ADDR=tcp(hjkl-mariadb:3306)
+      - HJKL_REDIS_ADDR=hjkl-redis:6379
+    volumes:
+      - ./config.yaml:/app/config.yaml
+  mariadb:
+    container_name: hjkl-mariadb
+    image: mariadb
+    restart: always
+    ports:
+      - "3306"
+    environment:
+      - MARIADB_ROOT_PASSWORD=root
+      - MARIADB_DATABASE=hjkl_db
+      - MARIADB_USER=user
+      - MARIADB_PASSWORD=user
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    networks:
+      - hjkl-network
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  adminer:
+    container_name: hjkl-adminer
+    image: adminer
+    restart: always
+    ports:
+      - 5001:8080
+    networks:
+      - hjkl-network
+  migrate:
+    container_name: hjkl-migrate
+    image: migrate/migrate
+    networks:
+      - hjkl-network
+    volumes:
+      - ./migrations:/migrations
+    command:
+      [
+        "-path",
+        "/migrations",
+        "-database",
+        "mysql://user:user@tcp(hjkl-mariadb:3306)/hjkl_db?multiStatements=true",
+        "up"
+      ]
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    links:
+      - mariadb
+  redis:
+    container_name: hjkl-redis
+    image: redis
+    restart: always
+    ports:
+      - '6379'
+    networks:
+      - hjkl-network
+    volumes:
+      - cache:/data
+
+networks:
+  hjkl-network:
+    driver: bridge
+
+volumes:
+  mariadb-data:
+  cache:

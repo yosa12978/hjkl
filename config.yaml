@@ -1,0 +1,15 @@
+app:
+  host: "0.0.0.0"
+  port: 80
+  root_password: "root"
+
+mariadb:
+  username: "user"
+  password: "user"
+  addr: "tcp(localhost:3306)"
+  db: "hjkl_db"
+
+redis:
+  addr: "localhost:6379"
+  db: 0
+  password: ""
