@@ -4,9 +4,12 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/yosa12978/hjkl/config"
 	"github.com/yosa12978/hjkl/data"
+	"github.com/yosa12978/hjkl/logging"
+	"github.com/yosa12978/hjkl/middleware"
 	"github.com/yosa12978/hjkl/util"
 )
 
@@ -22,6 +25,10 @@ func Run() error {
 		util.WriteJson(w, 200, map[string]any{"message": "Hello hjkl!"})
 	})
 
+	mux := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		logger := logging.NewJsonLogger(os.Stdout)
+		middleware.Latency(logger)(router).ServeHTTP(w, r)
+	})
 	addr := fmt.Sprintf("%s:%d", cfg.App.Host, cfg.App.Port)
-	return http.ListenAndServe(addr, router)
+	return http.ListenAndServe(addr, mux)
 }
