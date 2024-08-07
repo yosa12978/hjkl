@@ -1,7 +1,9 @@
 services:
   api:
     container_name: hjkl-api
-    build: .
+    build:
+      context: .
+      dockerfile: air.dockerfile
     ports:
       - "5000:80"
     restart: always
@@ -20,7 +22,8 @@ services:
       - HJKL_MARIADB_ADDR=tcp(hjkl-mariadb:3306)
       - HJKL_REDIS_ADDR=hjkl-redis:6379
     volumes:
-      - ./config.yaml:/app/config.yaml
+      - ./:/app
+      #  - ./config.yaml:/app/config.yaml
   mariadb:
     container_name: hjkl-mariadb
     image: mariadb
@@ -37,7 +40,13 @@ services:
     networks:
       - hjkl-network
     healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      test:
+        [
+          "CMD",
+          "healthcheck.sh",
+          "--connect",
+          "--innodb_initialized"
+        ]
       start_period: 10s
       interval: 10s
       timeout: 5s

@@ -19,7 +19,7 @@ func Run() error {
 	data.Redis(context.TODO())
 
 	router.HandleFunc("/{$}", func(w http.ResponseWriter, r *http.Request) {
-		util.WriteJson(w, 200, map[string]any{"msg": "hjkl"})
+		util.WriteJson(w, 200, map[string]any{"message": "Hello hjkl!"})
 	})
 
 	addr := fmt.Sprintf("%s:%d", cfg.App.Host, cfg.App.Port)
