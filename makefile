@@ -1,5 +1,6 @@
 build:
 	@go mod tidy
+	@swag init -g main.go
 	@go build -o bin/hjkl main.go
 
 run: build
