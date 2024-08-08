@@ -5,7 +5,7 @@ tmp_dir = "bin"
 
 [build]
 # Just plain old shell command. You could use `make` as well.
-cmd = "make build"
+cmd = "make"
 # Binary file yields from `cmd`.
 bin = "bin/hjkl"
 # Customize binary.
