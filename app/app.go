@@ -22,20 +22,42 @@ func Run() error {
 	data.Mariadb(context.TODO())
 	data.Redis(context.TODO())
 
-	router.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
-		util.WriteJson(w, 200, map[string]any{"message": "Hello hjkl!"})
-	})
+	router.HandleFunc("/api/hello", hello())
+	router.HandleFunc("/api/hello/{name}", hello())
 
 	router.HandleFunc("/swagger/*", httpSwagger.Handler(
-		httpSwagger.URL("/swagger/doc.json"), //The url pointing to API definition
+		httpSwagger.URL("/swagger/doc.json"),
 	))
 
 	logger := logging.NewJsonLogger(os.Stdout)
 	handlerChain := middleware.Chain(
 		router,
 		middleware.Latency(logger),
+		middleware.StripSlash,
 	)
 
 	addr := fmt.Sprintf("%s:%d", cfg.App.Host, cfg.App.Port)
 	return http.ListenAndServe(addr, handlerChain)
+}
+
+// hello handler godoc
+//	@Summary		Say hello
+//	@Description	just returns hello message
+//	@Accept			json
+//	@Produce		json
+//	@Success		200
+//	@Failure		500
+//	@Router			/hello [get]
+func hello() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		name := r.PathValue("name")
+		if name == "" {
+			name = "hjkl"
+		}
+		util.WriteJson(w, 200,
+			map[string]any{
+				"message": fmt.Sprintf("Hello %s!", name),
+			},
+		)
+	}
 }

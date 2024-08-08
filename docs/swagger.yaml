@@ -1,4 +1,4 @@
-basePath: /api
+basePath: /
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
@@ -14,7 +14,20 @@ info:
   termsOfService: http://swagger.io/terms/
   title: HJKL API
   version: "0.1"
-paths: {}
+paths:
+  /hello:
+    get:
+      consumes:
+      - application/json
+      description: just returns hello message
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+      summary: Say hello
 securityDefinitions:
   BasicAuth:
     type: basic

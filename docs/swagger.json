@@ -15,8 +15,29 @@
         "version": "0.1"
     },
     "host": "localhost:5000",
-    "basePath": "/api",
-    "paths": {},
+    "basePath": "/",
+    "paths": {
+        "/hello": {
+            "get": {
+                "description": "just returns hello message",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Say hello",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        }
+    },
     "securityDefinitions": {
         "BasicAuth": {
             "type": "basic"
