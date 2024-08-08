@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+
+	"github.com/yosa12978/hjkl/types"
 )
 
 func WriteJson(w http.ResponseWriter, statusCode int, payload any) error {
@@ -14,4 +16,12 @@ func WriteJson(w http.ResponseWriter, statusCode int, payload any) error {
 
 func ReadJson(r io.Reader, foo any) error {
 	return json.NewDecoder(r).Decode(foo)
+}
+
+// Writes json (types.Message) to w
+func WriteMsg(w http.ResponseWriter, statusCode int, msg string) error {
+	return WriteJson(w, statusCode, types.Message{
+		StatusCode: statusCode,
+		Message:    msg,
+	})
 }
