@@ -1,3 +1,5 @@
+.DEFAULT_GOAL = build
+
 build:
 	@go mod tidy
 	@swag init -g main.go
