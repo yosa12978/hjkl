@@ -34,7 +34,7 @@ services:
       - MARIADB_USER=user
       - MARIADB_PASSWORD=user
     volumes:
-      - hjkl_mariadb:/var/lib/mysql
+      - mariadb-data:/var/lib/mysql
     networks:
       - hjkl-network
     healthcheck:
@@ -84,12 +84,12 @@ services:
     networks:
       - hjkl-network
     volumes:
-      - hjkl_cache:/data
+      - cache-data:/data
 
 networks:
   hjkl-network:
     driver: bridge
 
 volumes:
-  hjkl_mariadb:
-  hjkl_cache:
+  mariadb-data:
+  cache-data:

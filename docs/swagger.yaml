@@ -1,4 +1,12 @@
 basePath: /
+definitions:
+  types.Message:
+    properties:
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
@@ -15,7 +23,7 @@ info:
   title: HJKL API
   version: "0.1"
 paths:
-  /hello:
+  /api/hello:
     get:
       consumes:
       - application/json
@@ -25,8 +33,12 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/types.Message'
         "500":
           description: Internal Server Error
+          schema:
+            $ref: '#/definitions/types.Message'
       summary: Say hello
 securityDefinitions:
   BasicAuth:
