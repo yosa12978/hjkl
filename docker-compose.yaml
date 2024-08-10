@@ -28,6 +28,8 @@ services:
     image: mariadb
     restart: always
     command: --max_allowed_packet=268435456
+    ports:
+      - "3306:3306"
     environment:
       - MARIADB_ROOT_PASSWORD=root
       - MARIADB_DATABASE=hjkl_db
