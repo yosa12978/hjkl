@@ -1,32 +1,41 @@
 package types
 
-import "database/sql"
+import (
+	"github.com/yosa12978/hjkl/validation"
+)
 
 type Comment struct {
-	Id       uint64
+	Id       string
 	Content  string
 	Author   string
-	AuthorId uint64
-	PostId   uint64
+	AuthorId string
+	PostId   string
+	Created  string
 	Replies  []Comment
-}
-
-type CommentSql struct {
-	Id       uint64
-	Content  string
-	AuthorId sql.NullInt64
-	ParentId sql.NullInt64
-	PostId   uint64
 }
 
 type CommentCreateDto struct {
 	Content  string
 	AuthorId string
-	// ParentId sql.NullInt64 (Maybe just use separate route to repoly and regular comment.)
-	// PostId   uint64
+	ParentId string //(Maybe just use separate route to repoly and regular comment.)
+	PostId   string
+}
+
+func (c CommentCreateDto) Validate() []string {
+	errs := []error{
+		validation.ValidatePresence("content", c.Content),
+	}
+	return validation.ExtractErrors(errs)
 }
 
 type CommentUpdateDto struct {
 	Content  string
 	AuthorId string
+}
+
+func (c CommentUpdateDto) Validate() []string {
+	errs := []error{
+		validation.ValidatePresence("content", c.Content),
+	}
+	return validation.ExtractErrors(errs)
 }

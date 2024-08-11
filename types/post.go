@@ -1,33 +1,41 @@
 package types
 
+import "github.com/yosa12978/hjkl/validation"
+
 type Post struct {
-	Id       uint64 `json:"id"`
+	Id       string `json:"id"`
 	Title    string `json:"title"`
 	Content  string `json:"content"`
 	Created  string `json:"created"`
 	Author   string `json:"author"`
-	AuthorId uint64 `json:"author_id"`
+	AuthorId string `json:"author_id"`
 	Comments int    `json:"comments_count"`
 }
 
-type PostSql struct {
-	Id       uint64
-	Title    string
-	Content  string
-	Created  string
-	Author   string
-	AuthorId uint64
-	Comments int
+type PostCreateDto struct {
+	Title    string `json:"title"`
+	Content  string `json:"content"`
+	AuthorId string `json:"author_id"`
 }
 
-type PostCreateDto struct {
-	Title    string
-	Content  string
-	Created  string
-	AuthorId string
+func (p PostCreateDto) Validate() []string {
+	errs := []error{
+		validation.ValidatePresence("content", p.Content),
+		validation.ValidatePresence("title", p.Title),
+		validation.ValidatePresence("author", p.AuthorId),
+	}
+	return validation.ExtractErrors(errs)
 }
 
 type PostUpdateDto struct {
-	Title   string
-	Content string
+	Title   string `json:"title"`
+	Content string `json:"content"`
+}
+
+func (p PostUpdateDto) Validate() []string {
+	errs := []error{
+		validation.ValidatePresence("content", p.Content),
+		validation.ValidatePresence("title", p.Title),
+	}
+	return validation.ExtractErrors(errs)
 }
