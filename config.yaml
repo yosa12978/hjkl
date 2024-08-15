@@ -3,11 +3,10 @@ app:
   port: 80
   root_password: "root"
 
-mariadb:
+postgres:
   username: "user"
   password: "user"
-  addr: "tcp(localhost:3306)"
-  db: "hjkl_db"
+  addr: "localhost:5432/hjkl_db?sslmode=disable"
 
 redis:
   addr: "localhost:6379"

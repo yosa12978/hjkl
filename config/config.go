@@ -21,12 +21,11 @@ type Config struct {
 		Port         int    `yaml:"port" envconfig:"HJKL_PORT" json:"port"`
 		RootPassword string `yaml:"root_password" envconfig:"HJKL_ROOT_PASSWORD" json:"root_password"`
 	} `yaml:"app" json:"app"`
-	Mariadb struct {
-		Username string `yaml:"username" envconfig:"HJKL_MARIADB_USERNAME" json:"username"`
-		Password string `yaml:"password" envconfig:"HJKL_MARIADB_PASSWORD" json:"password"`
-		Addr     string `yaml:"addr" envconfig:"HJKL_MARIADB_ADDR" json:"addr"`
-		Db       string `yaml:"db" envconfig:"HJKL_MARIADB_DB" json:"db"`
-	} `yaml:"mariadb" json:"mariadb"`
+	Postgres struct {
+		Username string `yaml:"username" envconfig:"HJKL_POSTGRES_USERNAME" json:"username"`
+		Password string `yaml:"password" envconfig:"HJKL_POSTGRES_PASSWORD" json:"password"`
+		Addr     string `yaml:"addr" envconfig:"HJKL_POSTGRES_ADDR" json:"addr"`
+	} `yaml:"postgres" json:"postgres"`
 	Redis struct {
 		Addr     string `yaml:"addr" envconfig:"HJKL_REDIS_ADDR" json:"addr"`
 		Db       int    `yaml:"db" envconfig:"HJKL_REDIS_DB" json:"db"`

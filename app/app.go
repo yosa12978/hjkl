@@ -19,8 +19,10 @@ func Run() error {
 	cfg := config.Read()
 
 	// Connecting to databases
-	data.Mariadb(context.TODO())
+	data.Postgres(context.TODO())
 	data.Redis(context.TODO())
+
+	router.HandleFunc("/health", endpoints.Health())
 
 	router.HandleFunc("/api/hello", endpoints.SayHello())
 	router.HandleFunc("/api/hello/{name}", endpoints.SayHello())

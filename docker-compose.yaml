@@ -8,55 +8,67 @@ services:
       - "5000:80"
     restart: always
     depends_on:
-      mariadb:
+      postgres:
         condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
       migrate:
         condition: service_completed_successfully
     networks:
       - hjkl-network
     environment:
-      - HJKL_MARIADB_USERNAME=user
-      - HJKL_MARIADB_PASSWORD=user
-      - HJKL_MARIADB_ADDR=tcp(hjkl-mariadb:3306)
+      - HJKL_POSTGRES_USERNAME=user
+      - HJKL_POSTGRES_PASSWORD=user
+      - HJKL_POSTGRES_ADDR=hjkl-postgres:5432/hjkl_db?sslmode=disable
       - HJKL_REDIS_ADDR=hjkl-redis:6379
     volumes:
       - ./:/app
-  mariadb:
-    container_name: hjkl-mariadb
-    image: mariadb
+    healthcheck:
+      test: curl -f http://localhost:80/health || exit 1
+      interval: 1m
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+  redis:
+    container_name: hjkl-redis
+    image: redis
     restart: always
-    command: --max_allowed_packet=268435456
     ports:
-      - "3306:3306"
-    environment:
-      - MARIADB_ROOT_PASSWORD=root
-      - MARIADB_DATABASE=hjkl_db
-      - MARIADB_USER=user
-      - MARIADB_PASSWORD=user
+      - "5001:6379"
+    networks:
+      - hjkl-network
     volumes:
-      - mariadb-data:/var/lib/mysql
+      - cache-data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  postgres:
+    container_name: hjkl-postgres
+    image: postgres
+    ports:
+      - "5002:5432"
+    restart: always
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=user
+      - POSTGRES_DB=hjkl_db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
     networks:
       - hjkl-network
     healthcheck:
-      test:
-        [
-          "CMD",
-          "healthcheck.sh",
-          "--connect",
-          "--innodb_initialized"
-        ]
-      start_period: 10s
+      test: [ "CMD-SHELL", "pg_isready -U user -d hjkl_db" ]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 3
   adminer:
     container_name: hjkl-adminer
     image: adminer
     restart: always
     ports:
-      - 5001:8080
+      - 5003:8080
     networks:
       - hjkl-network
   migrate:
@@ -71,27 +83,19 @@ services:
         "-path",
         "/migrations",
         "-database",
-        "mysql://user:user@tcp(hjkl-mariadb:3306)/hjkl_db?multiStatements=true",
+        "postgres://user:user@hjkl-postgres:5432/hjkl_db?sslmode=disable",
         "up"
       ]
     depends_on:
-      mariadb:
+      postgres:
         condition: service_healthy
     links:
-      - mariadb
-  redis:
-    container_name: hjkl-redis
-    image: redis
-    restart: always
-    networks:
-      - hjkl-network
-    volumes:
-      - cache-data:/data
+      - postgres
 
 networks:
   hjkl-network:
     driver: bridge
 
 volumes:
-  mariadb-data:
+  postgres-data:
   cache-data:
