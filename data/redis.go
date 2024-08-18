@@ -10,11 +10,11 @@ import (
 
 var (
 	rdb     redis.Cmdable
-	rdbOnce sync.Once
+	rdbInit sync.Once
 )
 
 func Redis(ctx context.Context) redis.Cmdable {
-	rdbOnce.Do(func() {
+	rdbInit.Do(func() {
 		cfg := config.Read()
 		rdb = redis.NewClient(&redis.Options{
 			Addr:     cfg.Redis.Addr,

@@ -13,17 +13,14 @@ CREATE TABLE IF NOT EXISTS posts (
     content TEXT NOT NULL,
     author_id VARCHAR(36) NOT NULL,
     created TIMESTAMP NOT NULL,
+    category_id VARCHAR(36) NULL DEFAULT NULL,
+    CONSTRAINT fk_post_category FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
     CONSTRAINT fk_post_author FOREIGN KEY (author_id) REFERENCES accounts(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS comments (
+CREATE TABLE IF NOT EXISTS categories (
     id VARCHAR(36) NOT NULL PRIMARY KEY,
-    content TEXT NOT NULL,
-    created TIMESTAMP NOT NULL,
-    author_id VARCHAR(36) NULL DEFAULT NULL,
+    name VARCHAR(200) NOT NULL,
     parent_id VARCHAR(36) NULL DEFAULT NULL,
-    post_id VARCHAR(36) NOT NULL,
-    CONSTRAINT fk_comment_author FOREIGN KEY (author_id) REFERENCES accounts(id) ON DELETE CASCADE,
-    CONSTRAINT fk_comment_post FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
-    CONSTRAINT fk_comment_parent FOREIGN KEY (parent_id) REFERENCES comments(id) ON DELETE CASCADE
+    CONSTRAINT fk_category_parent FOREIGN KEY (parent_id) REFERENCES categories(id) ON DELETE CASCADE
 );

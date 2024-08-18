@@ -12,11 +12,11 @@ import (
 
 var (
 	db     *sql.DB
-	dbOnce sync.Once
+	dbInit sync.Once
 )
 
 func Postgres(ctx context.Context) *sql.DB {
-	dbOnce.Do(func() {
+	dbInit.Do(func() {
 		cfg := config.Read()
 		addr := fmt.Sprintf(
 			"postgres://%s:%s@%s",
