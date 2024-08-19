@@ -1,6 +1,13 @@
 package validation
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
+
+type Validatable interface {
+	Validate(ctx context.Context) map[string]string
+}
 
 func ExtractErrors(errs []error) []string {
 	errsStr := make([]string, 0, len(errs))
