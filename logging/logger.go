@@ -22,6 +22,12 @@ func NewJsonLogger(w io.Writer) Logger {
 	}
 }
 
+func NewTextLogger(w io.Writer) Logger {
+	return &slogLogger{
+		logger: slog.New(slog.NewTextHandler(w, nil)),
+	}
+}
+
 func (l *slogLogger) Info(msg string, args ...any) {
 	l.logger.Info(msg, args...)
 }
