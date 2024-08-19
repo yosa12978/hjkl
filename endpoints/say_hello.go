@@ -8,6 +8,7 @@ import (
 )
 
 // SayHello endpoint godoc
+//
 //	@Summary		Say hello
 //	@Description	just returns hello message
 //	@Accept			json

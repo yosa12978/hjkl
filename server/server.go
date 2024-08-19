@@ -17,6 +17,7 @@ func New(opts ...optionFunc) http.Handler {
 		router,
 		middleware.Latency(options.logger),
 		middleware.StripSlash,
+		middleware.Recovery(options.logger),
 	)
 	return handler
 }
