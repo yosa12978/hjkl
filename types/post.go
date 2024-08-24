@@ -1,6 +1,11 @@
 package types
 
-import "github.com/yosa12978/hjkl/validation"
+import (
+	"context"
+	"strings"
+
+	"github.com/yosa12978/hjkl/validation"
+)
 
 type Post struct {
 	Id       string `json:"id"`
@@ -13,18 +18,21 @@ type Post struct {
 }
 
 type PostCreateDto struct {
-	Title    string `json:"title"`
-	Content  string `json:"content"`
-	AuthorId string `json:"author_id"`
+	Title   string `json:"title"`
+	Content string `json:"content"`
 }
 
-func (p PostCreateDto) Validate() []string {
-	errs := []error{
-		validation.ValidatePresence("content", p.Content),
-		validation.ValidatePresence("title", p.Title),
-		validation.ValidatePresence("author", p.AuthorId),
+func (p *PostCreateDto) Validate(ctx context.Context) map[string]string {
+	problems := make(map[string]string)
+	p.Title = strings.TrimSpace(p.Title)
+	p.Content = strings.TrimSpace(p.Content)
+	if err := validation.ValidatePresence("content", p.Content); err != nil {
+		problems["content"] = err.Error()
 	}
-	return validation.ExtractErrors(errs)
+	if err := validation.ValidatePresence("title", p.Title); err != nil {
+		problems["title"] = err.Error()
+	}
+	return problems
 }
 
 type PostUpdateDto struct {
@@ -32,10 +40,15 @@ type PostUpdateDto struct {
 	Content string `json:"content"`
 }
 
-func (p PostUpdateDto) Validate() []string {
-	errs := []error{
-		validation.ValidatePresence("content", p.Content),
-		validation.ValidatePresence("title", p.Title),
+func (p *PostUpdateDto) Validate(ctx context.Context) map[string]string {
+	problems := make(map[string]string)
+	p.Title = strings.TrimSpace(p.Title)
+	p.Content = strings.TrimSpace(p.Content)
+	if err := validation.ValidatePresence("content", p.Content); err != nil {
+		problems["content"] = err.Error()
 	}
-	return validation.ExtractErrors(errs)
+	if err := validation.ValidatePresence("title", p.Title); err != nil {
+		problems["title"] = err.Error()
+	}
+	return problems
 }

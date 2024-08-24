@@ -6,6 +6,6 @@ type Message struct {
 }
 
 type ValidationError struct {
-	StatusCode int      `json:"status_code"`
-	Errors     []string `json:"errors"`
+	StatusCode int               `json:"status_code"`
+	Errors     map[string]string `json:"errors"`
 }

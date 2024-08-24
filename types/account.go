@@ -1,6 +1,9 @@
 package types
 
 import (
+	"context"
+	"strings"
+
 	"github.com/yosa12978/hjkl/validation"
 )
 
@@ -18,12 +21,17 @@ type AccountCreateDto struct {
 	Password string `json:"password"`
 }
 
-func (a AccountCreateDto) Validate() []string {
-	errs := []error{
-		validation.ValidateLength(3, 20)("username", a.Username),
-		validation.ValidateLength(3, 20)("password", a.Password),
+func (a *AccountCreateDto) Validate(ctx context.Context) map[string]string {
+	problems := make(map[string]string)
+	a.Username = strings.TrimSpace(a.Username)
+	a.Password = strings.TrimSpace(a.Password)
+	if err := validation.ValidateLength(3, 20)("username", a.Username); err != nil {
+		problems["username"] = err.Error()
 	}
-	return validation.ExtractErrors(errs)
+	if err := validation.ValidateLength(3, 20)("password", a.Password); err != nil {
+		problems["password"] = err.Error()
+	}
+	return problems
 }
 
 type AccountUpdateDto struct {
@@ -31,10 +39,15 @@ type AccountUpdateDto struct {
 	OldPassword string `json:"old_password"`
 }
 
-func (a AccountUpdateDto) Validate() []string {
-	errs := []error{
-		validation.ValidateLength(3, 20)("old password", a.OldPassword),
-		validation.ValidateLength(3, 20)("new password", a.NewPassword),
+func (a *AccountUpdateDto) Validate(ctx context.Context) map[string]string {
+	problems := make(map[string]string)
+	a.NewPassword = strings.TrimSpace(a.NewPassword)
+	a.OldPassword = strings.TrimSpace(a.OldPassword)
+	if err := validation.ValidateLength(3, 20)("old password", a.OldPassword); err != nil {
+		problems["oldPassword"] = err.Error()
 	}
-	return validation.ExtractErrors(errs)
+	if err := validation.ValidateLength(3, 20)("new password", a.NewPassword); err != nil {
+		problems["newPassword"] = err.Error()
+	}
+	return problems
 }
