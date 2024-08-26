@@ -23,10 +23,17 @@ func New(opts ...optionFunc) http.Handler {
 }
 
 func addRoutes(r *http.ServeMux, options options) {
+	r.Handle("/api/v1/", addV1Routes(options))
+
 	r.HandleFunc("GET /health", endpoints.Health())
-	r.HandleFunc("GET /api/hello", endpoints.SayHello())
-	r.HandleFunc("GET /api/hello/{name}", endpoints.SayHello())
 	r.HandleFunc("GET /swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("/swagger/doc.json"),
 	))
+}
+
+func addV1Routes(options options) http.Handler {
+	api := http.NewServeMux()
+	api.HandleFunc("GET /hello", endpoints.SayHello())
+	api.HandleFunc("GET /hello/{name}", endpoints.SayHello())
+	return http.StripPrefix("/api/v1", api)
 }
